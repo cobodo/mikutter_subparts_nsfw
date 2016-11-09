@@ -43,7 +43,7 @@ Plugin.create :subparts_nsfw do
       layout.font_description = Pango::FontDescription.new(UserConfig[:mumble_basic_font])
       layout.alignment = Pango::ALIGN_LEFT
       if helper.message.possibly_sensitive?
-        layout.text = "NSFW"
+        layout.text = " NSFW"
       else
         layout.text = ""
       end 
