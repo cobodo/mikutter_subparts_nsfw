@@ -35,9 +35,11 @@ Plugin.create :subparts_nsfw do
     end
   end
 
-  class DonMessage < Retriever::Model
-    def possibly_sensitive?
-      false # mastodon-api:Mastodon::Statusが何も返してくれないため
+  if defined?(DonMessage) && DonMessage.class == Class
+    class DonMessage < Retriever::Model
+      def possibly_sensitive?
+        false # mastodon-api:Mastodon::Statusが何も返してくれないため
+      end
     end
   end
 
