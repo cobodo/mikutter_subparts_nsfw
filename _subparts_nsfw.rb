@@ -9,6 +9,38 @@ Plugin.create :subparts_nsfw do
     end
   end
 
+  if defined?(Mikutter::System::Message) && Mikutter::System::Message.class == Class
+    class Mikutter::System::Message
+      def possibly_sensitive?
+        false
+      end
+    end
+  end
+
+  if defined?(Diva::Model) && Diva::Model.class == Class
+    module Mikutter::Twitter
+      class DirectMessage < Diva::Model
+        def possibly_sensitive?
+          false
+        end
+      end
+    end
+  else
+    module Mikutter::Twitter
+      class DirectMessage < Retriever::Model
+        def possibly_sensitive?
+          false
+        end
+      end
+    end
+  end
+
+  class DonMessage < Retriever::Model
+    def possibly_sensitive?
+      false # mastodon-api:Mastodon::Statusが何も返してくれないため
+    end
+  end
+
   class Gdk::SubPartsNsfw < Gdk::SubParts
     register
 
@@ -24,30 +56,30 @@ Plugin.create :subparts_nsfw do
           context.scale(20.0/pixbuf.width, 20.0/pixbuf.height)
           context.set_source_pixbuf(pixbuf)
           context.paint
-        end 
-      end 
-    end 
+        end
+      end
+    end
 
     def height
       if helper.message.possibly_sensitive?
         [main_message.size[1] / Pango::SCALE, 18].max
       else
-        0   
-      end 
-    end 
+        0
+      end
+    end
 
     private
 
     def main_message(context = dummy_context)
       layout = context.create_pango_layout
       layout.font_description = Pango::FontDescription.new(UserConfig[:mumble_basic_font])
-      layout.alignment = Pango::ALIGN_LEFT
+      layout.alignment = Pango::Alignment::LEFT
       if helper.message.possibly_sensitive?
         layout.text = " NSFW"
       else
         layout.text = ""
-      end 
+      end
       layout
-    end 
-  end 
+    end
+  end
 end
