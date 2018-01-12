@@ -1,0 +1,10 @@
+---
+slug: :mikutter_subparts_nsfw
+depends:
+  mikutter: 3.5.0
+  plugin:
+  - gtk
+version: '1.0'
+author: '@cobodo@mstdn.kanagu.info'
+name: mikutter_subparts_nsfw
+description: NSFWフラグが立っているModelに注意書きを追加します
