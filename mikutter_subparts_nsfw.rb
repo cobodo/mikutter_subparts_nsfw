@@ -21,9 +21,9 @@ Plugin.create :subparts_nsfw do
         context.save do
           layout = main_message(context)
           context.set_source_rgb(*([0xff / 256.0,0x28 / 256.0,0]))
-          context.translate(0, 3)
+          context.translate(0, 4)
           context.show_pango_layout(layout)
-          context.translate(0, -3)
+          context.translate(0, -4)
 
           pixbuf = Skin["dont_like.png"].pixbuf(width: 20, height: 20)
           context.translate(42, 0)
