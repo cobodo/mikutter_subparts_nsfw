@@ -12,6 +12,11 @@ Plugin.create :subparts_nsfw do
   class Gdk::SubPartsNsfw < Gdk::SubParts
     register
 
+    class << self
+      attr_accessor :top_shift
+    end
+    @top_shift = 0 # Gdk::SubPartsNsfw.top_shift = 4 などと調整できる
+
     def sensitive?(message)
       message.respond_to?(:sensitive?) and message.sensitive?
     end
@@ -21,9 +26,9 @@ Plugin.create :subparts_nsfw do
         context.save do
           layout = main_message(context)
           context.set_source_rgb(*([0xff / 256.0,0x28 / 256.0,0]))
-          context.translate(0, 4)
+          context.translate(0, self.class.top_shift)
           context.show_pango_layout(layout)
-          context.translate(0, -4)
+          context.translate(0, -self.class.top_shift)
 
           pixbuf = Skin["dont_like.png"].pixbuf(width: 20, height: 20)
           context.translate(42, 0)
@@ -34,11 +39,7 @@ Plugin.create :subparts_nsfw do
     end
 
     def height
-      if sensitive?(helper.message)
-        [main_message.size[1] / Pango::SCALE, 18].max
-      else
-        0
-      end
+      @height ||= sensitive?(helper.message) ? [main_message.size[1] / Pango::SCALE, 18].max : 0
     end
 
     private
