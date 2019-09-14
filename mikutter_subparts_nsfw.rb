@@ -30,8 +30,8 @@ Plugin.create :subparts_nsfw do
           context.show_pango_layout(layout)
           context.translate(0, -self.class.top_shift)
 
-          pixbuf = Skin["dont_like.png"].pixbuf(width: 20, height: 20)
-          context.translate(42, 0)
+          pixbuf = Skin["dont_like.png"].pixbuf(width: scale(20), height: scale(20))
+          context.translate(scale(42), 0)
           context.set_source_pixbuf(pixbuf)
           context.paint
         end
@@ -44,9 +44,27 @@ Plugin.create :subparts_nsfw do
 
     private
 
-    def main_message(context = dummy_context)
+    if Environment::VERSION < [3, 9, 0, 0]
+      def main_message(context = dummy_context)
+        _main_message(context, Pango::FontDescription.new(UserConfig[:mumble_basic_font]))
+      end
+
+      def scale(val)
+        val
+      end
+    else
+      def main_message(context = Cairo::Context.dummy)
+        _main_message(context, helper.font_description(UserConfig[:mumble_basic_font]))
+      end
+
+      def scale(val)
+        helper.scale(val)
+      end
+    end
+
+    def _main_message(context, font_description)
       layout = context.create_pango_layout
-      layout.font_description = Pango::FontDescription.new(UserConfig[:mumble_basic_font])
+      layout.font_description = font_description
       layout.alignment = Pango::Alignment::LEFT
       if sensitive?(helper.message)
         layout.text = " NSFW"
